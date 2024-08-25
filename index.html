@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>UPS Pension Calculator</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-image: url('https://www.example.com/background-image.jpg'); /* Replace with an actual image URL */
+            background-size: cover;
+            background-position: center;
+            color: #333;
+        }
+
+        .overlay {
+            background-color: rgba(255, 255, 255, 0.95);
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        .container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        h1, h2 {
+            text-align: center;
+            color: #003366;
+        }
+
+        label {
+            font-weight: bold;
+            color: #003366;
+        }
+
+        input[type="number"] {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 20px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+        }
+
+        button {
+            width: 100%;
+            padding: 12px;
+            background-color: #0066cc;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 18px;
+        }
+
+        button:hover {
+            background-color: #0052a3;
+        }
+
+        .result, .warning {
+            margin-top: 20px;
+            padding: 15px;
+            background-color: #e7f5ff;
+            border-left: 4px solid #0066cc;
+        }
+
+        .warning {
+            background-color: #ffcccc;
+            border-left-color: #cc0000;
+            color: #cc0000;
+        }
+
+        .calculation-section {
+            margin-top: 40px;
+            padding: 20px;
+            background-color: #f1f1f1;
+            border-radius: 10px;
+            max-width: 700px;
+            text-align: left;
+            font-size: 16px;
+        }
+
+        .calculation-section h3 {
+            color: #003366;
+        }
+
+        .link {
+            margin-top: 20px;
+            text-align: center;
+        }
+
+        .link a {
+            color: #0066cc;
+            text-decoration: none;
+            font-weight: bold;
+        }
+
+        .link a:hover {
+            text-decoration: underline;
+        }
+
+        .note {
+            margin-top: 20px;
+            font-size: 14px;
+            color: #666;
+            text-align: center;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="container">
+        <div class="overlay">
+            <h1>UPS Pension Calculator</h1>
+            <h2>Estimate Your Pension</h2>
+
+            <label for="basicSalary">Current Basic Salary (₹):</label>
+            <input type="number" id="basicSalary" placeholder="Enter your current basic salary" required>
+
+            <label for="yearJoined">Year Joined:</label>
+            <input type="number" id="yearJoined" placeholder="Enter the year you joined" required>
+
+            <label for="retirementYear">Year of Retirement:</label>
+            <input type="number" id="retirementYear" placeholder="Enter the year of retirement" required>
+
+            <label for="inflationRate">Inflation Rate (%):</label>
+            <input type="number" id="inflationRate" placeholder="Enter the inflation rate (default 3%)" value="3" required>
+
+            <label for="drPercentage">Estimated DR Percentage (%):</label>
+            <input type="number" id="drPercentage" placeholder="Enter the Estimated DR percentage (default 50%)" value="50" required>
+
+            <button onclick="calculatePension()">Calculate Pension</button>
+
+            <div class="warning" id="warning" style="display:none;"></div>
+            <div class="result" id="result" style="display:none;"></div>
+
+            <div class="calculation-section" id="calculationSection" style="display:none;">
+                <h3>How the Pension is Calculated</h3>
+                <div id="exampleCalculation"></div>
+            </div>
+
+            <div class="link">
+                <a href="https://www.pmindia.gov.in/en/news_updates/cabinet-approves-unified-pension-scheme/?comment=disable#:~:text=Assured%20minimum%20pension%3A%20%4010%2C000%20per,minimum%2010%20years%20of%20service."
+                   target="_blank">Click here for more details about the Unified Pension Scheme</a>
+            </div>
+
+            <div class="note">
+                <strong>Note:</strong> This is just an estimated value, and the actual pension may vary based on multiple factors.
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function calculatePension() {
+            // Retrieve input values
+            const basicSalary = parseFloat(document.getElementById('basicSalary').value);
+            const yearJoined = parseInt(document.getElementById('yearJoined').value);
+            const retirementYear = parseInt(document.getElementById('retirementYear').value);
+            const inflationRate = parseFloat(document.getElementById('inflationRate').value) / 100;
+            const drPercentage = parseFloat(document.getElementById('drPercentage').value) / 100;
+
+            // Calculate service period
+            const servicePeriod = retirementYear - yearJoined;
+
+            // Eligibility Check: If service period is less than 10 years, show warning
+            if (servicePeriod < 10) {
+                const warningDiv = document.getElementById('warning');
+                warningDiv.style.display = 'block';
+                warningDiv.innerHTML = `<strong>Warning:</strong> You are not eligible for pension as your service period is less than 10 years.`;
+                document.getElementById('result').style.display = 'none';
+                document.getElementById('calculationSection').style.display = 'none';
+                return;
+            }
+
+            // Adjusted basic salary considering inflation
+            const yearsUntilRetirement = retirementYear - new Date().getFullYear();
+            const adjustedBasicSalary = basicSalary * Math.pow((1 + inflationRate), yearsUntilRetirement);
+
+            // Calculate DA (50% of adjusted basic salary)
+            const daAmount = 0.5 * adjustedBasicSalary;
+
+
+            // Calculate proportionate pension
+            let proportionatePension;
+            if (servicePeriod >= 25) {
+                proportionatePension = 0.5 * adjustedBasicSalary;
+            } else {
+                proportionatePension = (servicePeriod / 25) * 0.5 * adjustedBasicSalary;
+            }
+
+            // Calculate Estimated DR amount
+            const drAmount = drPercentage * proportionatePension;
+
+            // Calculate total pension
+            const totalPension = proportionatePension + drAmount;
+
+            // Calculate lump-sum amount at retirement
+            const monthlyEmoluments = adjustedBasicSalary + daAmount; // Only Basic + DA is used for lump-sum calculation
+            const lumpSumAmount = (1 / 10) * monthlyEmoluments * (servicePeriod * 2);
+
+            // Display the result
+            const resultDiv = document.getElementById('result');
+            resultDiv.style.display = 'block';
+            resultDiv.innerHTML = `
+                <strong>Estimated Pension: ₹${totalPension.toFixed(2)} per month</strong><br>
+                <strong>Lump Sum Amount at Retirement: ₹${lumpSumAmount.toFixed(2)}</strong>
+            `;
+
+            // Display the calculation example
+            const calculationSection = document.getElementById('calculationSection');
+            const exampleCalculation = document.getElementById('exampleCalculation');
+            calculationSection.style.display = 'block';
+            exampleCalculation.innerHTML = `
+                <p>Let's calculate the estimated pension for an employee with a basic salary of ₹${basicSalary.toFixed(2)}, who joined in ${yearJoined} and retires in ${retirementYear}.</p>
+                <ul>
+                    <li><strong>Service Period:</strong> ${servicePeriod} years</li>
+                    <li><strong>Adjusted Basic Salary:</strong> Assuming an inflation rate of ${inflationRate * 100}%, ₹${basicSalary.toFixed(2)} becomes ₹${adjustedBasicSalary.toFixed(2)} at the time of retirement.</li>
+                    <li><strong>Proportionate Pension:</strong> ${servicePeriod >= 25 ? '50% of' : `(${servicePeriod}/25) × 0.5 ×`} ₹${adjustedBasicSalary.toFixed(2)} = ₹${proportionatePension.toFixed(2)}</li>
+                    <li><strong>Estimated DR Amount:</strong> ${drPercentage * 100}% of ₹${proportionatePension.toFixed(2)} = ₹${drAmount.toFixed(2)}</li>
+                    <li><strong>Total Estimated Pension:</strong> ₹${proportionatePension.toFixed(2)} + ₹${drAmount.toFixed(2)} = ₹${totalPension.toFixed(2)} per month</li>
+                </ul>
+                <ul>    
+                    <br>
+                    <p><strong>Just Before Retirement Salary</strong</p>
+                    <li><strong>Future DA (Dearness Allowance):</strong> ₹${daAmount.toFixed(2)}</li>
+                    <li><strong>Salary=Future Basic + Future DA (Dearness Allowance):</strong> ₹${daAmount.toFixed(2)}  + ₹${adjustedBasicSalary.toFixed(2)} = ${daAmount+adjustedBasicSalary} </li>
+                    <li><strong> Final Calculation: </strong> (1 / 10) *${monthlyEmoluments} * (${servicePeriod} * 2)</li>
+                    <li><strong>Lump Sum Amount at Retirement:</strong> ₹${lumpSumAmount.toFixed(2)}</li>
+                </ul>
+            `;
+        }
+    </script>
+
+</body>
+
+</html>
