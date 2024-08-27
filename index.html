@@ -136,20 +136,20 @@
             <h1>UPS Pension Calculator</h1>
             <h2>Unified Pension Scheme</h2>
             <h3>Estimate Your Pension & Lumpsum</h3>
-            <label for="basicSalary">Current Basic Salary (₹):</label>
+            <label for="basicSalary">Current Basic Salary-2024 (₹):</label>
             <input type="number" id="basicSalary" placeholder="Enter your current basic salary" required>
 
             <label for="yearJoined">Year Joined:</label>
             <input type="number" id="yearJoined" placeholder="Enter the year you joined" required>
 
             <label for="retirementYear">Year of Retirement:</label>
-            <input type="number" id="retirementYear" placeholder="Enter the year of retirement" required>
+            <input type="number" id="retirementYear" placeholder="Enter the year of retirement" required oninput="updateDrPercentage()">
 
             <label for="inflationRate">Inflation Rate-Basic (%):</label>
             <input type="number" id="inflationRate" placeholder="Enter the inflation rate (default 3%)" value="3" required>
 
             <label for="drPercentage">Estimated DR Percentage (%):</label>
-            <input type="number" id="drPercentage" placeholder="Enter the Estimated DR percentage (default 50%)" value="50" required>
+            <input type="number" id="drPercentage" placeholder="Estimated DR percentage at Retitement" value="50" required>
 
             <button onclick="calculatePension()">Calculate Pension</button>
 
@@ -185,6 +185,33 @@
     
 
     <script>
+        function updateDrPercentage() {
+        const drBaseYear = 2024; // Base year for DR percentage calculations
+        const drBasePercentage = 50; // DR percentage in the base year (2024)
+        const drIncrementPerYear = 4; // Increment in DR percentage per year
+
+        // Get the retirement year input value
+        const retirementYear = parseInt(document.getElementById('retirementYear').value);
+
+        // Calculate the difference in years from the base year
+        const yearsFromBase = retirementYear - drBaseYear;
+
+        // Calculate the updated DR percentage
+        let newDrPercentage = drBasePercentage + (yearsFromBase * drIncrementPerYear);
+
+        // Ensure DR percentage doesn't fall below 50% (in case the year is before 2024)
+        if (newDrPercentage < drBasePercentage) {
+            newDrPercentage = drBasePercentage;
+        }
+
+        // Update the DR percentage input field with the calculated value
+        document.getElementById('drPercentage').value = newDrPercentage;
+    }
+
+    // Call updateDrPercentage when the page loads to set an initial value based on the current year
+    document.addEventListener('DOMContentLoaded', function() {
+        updateDrPercentage();
+    });
         function calculatePension() {
             // Retrieve input values
             const basicSalary = parseFloat(document.getElementById('basicSalary').value);
@@ -262,6 +289,7 @@
                     <li><strong>Lump Sum Amount at Retirement:</strong> ₹${lumpSumAmount.toFixed(2)}</li>
                 </ul>
             `;
+            resultDiv.scrollIntoView({ behavior: 'smooth' });
         }
     </script>
 
