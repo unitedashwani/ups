@@ -276,7 +276,7 @@
                 <ul>
                     <li><strong>Service Period:</strong> ${servicePeriod} years</li>
                     <li><strong>Adjusted Basic Salary:</strong> Assuming an inflation rate of ${inflationRate * 100}%, ₹${basicSalary.toFixed(2)} becomes ₹${adjustedBasicSalary.toFixed(2)} at the time of retirement.</li>
-                    <li><strong>Proportionate Pension:</strong> ${servicePeriod >= 25 ? '50% of' : `(${servicePeriod}/25) × 0.5 ×`} ₹${adjustedBasicSalary.toFixed(2)} = ₹${proportionatePension.toFixed(2)}</li>
+                    <li><strong>Proportionate Basic Pension:</strong> ${servicePeriod >= 25 ? '50% of' : `(${servicePeriod}/25) × 0.5 ×`} ₹${adjustedBasicSalary.toFixed(2)} = ₹${proportionatePension.toFixed(2)}</li>
                     <li><strong>Estimated DR Amount:</strong> ${drPercentage * 100}% of ₹${proportionatePension.toFixed(2)} = ₹${drAmount.toFixed(2)}</li>
                     <li><strong>Total Estimated Pension:</strong> ₹${proportionatePension.toFixed(2)} + ₹${drAmount.toFixed(2)} = ₹${totalPension.toFixed(2)} per month</li>
                 </ul>
